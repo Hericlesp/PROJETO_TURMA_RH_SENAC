@@ -79,21 +79,63 @@ def criar_banco():
 # bd	Espessura da borda
 
 
-root = tk.Tk()
-root.title("Registro de ponto")
-root.geometry("900x500")
-#formata ção da janela
-root.minsize(900, 500)
-root.resizable(False, True)
-root.configure(bg= "lightblue")
-root.iconbitmap(r'C:\Users\Justino\Documents\Hexa\git&github\PROJETO_TURMA_RH_SENAC\pin.png')
+class SistemaPonto:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Registro de ponto")
+        self.root.geometry("900x500")
+        self.root.minsize(900, 500)
+        self.root.resizable(False, True)
+        self.root.configure(bg="lightblue")
+        self.root.iconbitmap(r'C:\Users\Justino\Documents\Hexa\git&github\PROJETO_TURMA_RH_SENAC\pin.png')
 
-#barra de menu
-top_frame = tk.Frame(root, bg= "#F09001", width= 900, height= 50)
-top_frame.pack(side= "top", fill="x")
+        self.criar_widgets()
 
-title_lbl = tk.Label(top_frame, text= "Ponto Eletrônico", font= ("Arial", 20), bg= "#F09001", fg= "black")
-title_lbl.pack(pady=10)
+    def criar_widgets(self):
+        # Barra superior
+        self.top_frame = tk.Frame(self.root, bg="#F09001", width=900, height=100)
+        self.top_frame.pack(fill="x", side="top", padx=0, pady=0)
+
+        self.title_lbl = tk.Label(self.top_frame, text="Ponto Eletrônico", font=("Arial", 20,"bold"), bg="#F09001", fg="black")
+        self.title_lbl.pack(padx=10, pady=10)
 
 
-root.mainloop()
+        #frame do centro
+        self.center_frame = tk.Frame(self.root, bg="white", width=900, height=300)
+        self.center_frame.pack(fill="both", side="top", padx=0, pady=15)
+
+        self.nome_lbl = tk.Label(self.center_frame, text="José Araudo Dos Santos", font=("Arial", 28), bg="white", fg="black")
+        self.nome_lbl.pack(padx=10)
+
+
+        self.Matricula_lbl = tk.Label(self.center_frame, text=" MATRICULA: 85b690", font=("Arial", 10), bg="white", fg="black")
+        self.Matricula_lbl.pack(padx=10)
+        
+        self.codigo_lbl = tk.Label(self.center_frame, text="CÓDIGO", font=("Arial", 14,"bold"), bg="white", fg="black")
+        self.codigo_lbl.pack(padx=10, pady=10)
+
+        codigo_ety = tk.Entry(self.center_frame, font=("Arial", 20, "bold"), bg="#f0f0f0", fg="black", width=15, justify="center") 
+        codigo_ety.pack(pady=20)
+
+
+
+        #footer frame
+
+        self.footer_frame = tk.Frame(self.root, bg="white", width=900, height=100)
+        self.footer_frame.pack(fill="both", padx=0, pady=10)
+
+        Regis_Entrada_btn = tk.Button(self.footer_frame, text="Registrar \n Entrada", font=("Arial", 14), bg="#005E19", fg="white", width=20, height=2)
+        Regis_Entrada_btn.pack(pady=10)
+
+        # Menu lateral (corrigido para Frame)
+        # self.menu_frame = tk.Button(self.root, text= "II", fg= "#000000", bg="#F09001", width=5, height=5)
+        # self.menu_frame.grid(row=0, column=0)
+
+    def run(self):
+        self.root.mainloop()
+
+# Programa principal
+if __name__ == "__main__":
+    root = tk.Tk()
+    point = SistemaPonto(root)
+    point.run()
