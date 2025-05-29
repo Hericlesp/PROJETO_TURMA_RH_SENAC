@@ -63,7 +63,7 @@ class SistemaPonto:
         self.top_frame = tk.Frame(self.root, bg="green", height=70)
         self.top_frame.pack(fill="x", side="top")
 
-        self.title_lbl = tk.Label(self.top_frame, text="HEXALUV", font=("Arial", 20, "bold"), bg="green", fg="white")
+        self.title_lbl = tk.Label(self.top_frame, text="REGISTRO DE PONTO", font=("Arial", 20, "bold"), bg="green", fg="white")
         self.title_lbl.pack(padx=10, pady=15)
 
         # Frame lateral (Menu)
