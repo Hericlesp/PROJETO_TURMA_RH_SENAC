@@ -1,20 +1,39 @@
-#informaçoes de contato dos programadores
-
 import tkinter as tk
-from tkinter import *
 
 
-class help:
-    def infohelp():
-        root = tk.Tk()
-        root.title("Ajuda")
-        root.geometry("400x300")
-        root.configure(bg="#F0F0F0")
+def infohelp(center_frame):
+    # Limpa o conteúdo atual do frame central
+    for widget in center_frame.winfo_children():
+        widget.destroy()
 
-        Label(root, text="Informações de Contato", font=("Arial", 16, "bold"), bg="#F0F0F0").pack(pady=10)
+    # ---------- Conteúdo da Ajuda ----------
+    titulo = tk.Label(center_frame, text="🛟 AJUDA E SUPORTE",
+                       font=("Arial", 20, "bold"), bg="white", fg="black")
+    titulo.pack(pady=15)
 
-        Label(root, text="Desenvolvedores:", font=("Arial", 14), bg="#F0F0F0").pack(pady=5)
-        Label(root, text="Justino Araújo", bg="#F0F0F0").pack()
-        Label(root, text="José Araújo", bg="#F0F0F0").pack()
+    texto = (
+        "✔️ Para registrar ponto, clique no botão 'Registrar Ponto'.\n\n"
+        "✔️ Para cadastrar um novo funcionário, clique em 'Cadastro'.\n\n"
+        "✔️ As informações são salvas automaticamente no banco de dados.\n\n"
+        "✔️ Em caso de dúvidas técnicas, procure o setor de TI.\n\n"
+        "✔️ Este sistema foi desenvolvido para fins educacionais no SENAC.\n\n"
 
-        Button(root, text="Fechar", command=root.destroy).pack(pady=20)
+        "Versão: 1.0.0\n\n"
+        "\n\n"
+        
+        "          Uma parceria de Hexa & Aluv"
+    )
+
+    label_texto = tk.Label(center_frame, text=texto, font=("Arial", 12),
+                            bg="white", fg="black", justify="left")
+    label_texto.pack(padx=40, pady=15, anchor="w")
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Cadastro de Funcionário")
+    root.geometry("800x400")
+    root.configure(bg='#FFFFFF')
+
+    app = infohelp(root)
+    root.mainloop()
