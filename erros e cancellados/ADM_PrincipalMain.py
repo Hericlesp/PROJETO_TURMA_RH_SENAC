@@ -1,13 +1,10 @@
 import tkinter as tk
 from tkinter import *
-import sqlite3
 import datetime as dt
 import os
 
 #documentos internos
-import registro_funcionario
-import help
-import POINT_registrar as point
+
 
 
 # Caminho para o banco de dados
@@ -16,37 +13,6 @@ DB_PATH = os.path.join(DB_DIR, 'REGISTER_POINTS.db')
 
 
 class SistemaPonto:
-
-    def criar_banco():
-        if not os.path.exists(DB_DIR):
-            os.makedirs(DB_DIR)
-
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Colaborador (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            RA INT UNIQUE,
-            Nome TEXT,
-            Setor TEXT,
-            Email TEXT,
-            Celular INT
-        )''')
-
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Entrada (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            HORA_ENT TEXT,
-            STATUS TEXT DEFAULT 'WORKING'
-        )''')
-
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Saida (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            HORA_SAI TEXT,
-            STATUS TEXT DEFAULT 'EXIT'
-        )''')
-
-        conn.commit()
-        conn.close()
 
     def __init__(self, root):
         self.root = root
@@ -72,8 +38,7 @@ class SistemaPonto:
 
         # Botões do menu lateral
         #btn_cadastro = tk.Button(self.menu_frame, text="✏️ | Cadastro", bg="#f0f0f0", width=15, command=registro_funcionario.RegistroFuncionario)
-        btn_cadastro = tk.Button(self.menu_frame, text="✏️ | Cadastro", bg="#f0f0f0", width=15,
-                          command=lambda: registro_funcionario.RegistroFuncionario(self.center_frame))        
+        btn_cadastro = tk.Button(self.menu_frame, text="✏️ | Cadastro", bg="#f0f0f0", width=15)        
         btn_cadastro.pack(pady=10)
         
 
