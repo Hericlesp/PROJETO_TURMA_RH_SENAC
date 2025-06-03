@@ -240,7 +240,7 @@ class SistemaPonto:
         )
         btn_cadastro.pack(pady=10)
         
-        btn_gerar = tk.Button(self.menu_frame, text="Gerar Código", bg="#f0f0f0", command=lambda:gerar_codigo.SistemaPonto, width=15)
+        btn_gerar = tk.Button(self.menu_frame, text="Gerar Código", bg="#f0f0f0", command=gerar_codigo.abrir_gerador_codigo, width=15)
         btn_gerar.pack(pady=10)
 
         btn_registrar = tk.Button(
