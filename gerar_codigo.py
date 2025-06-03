@@ -8,10 +8,6 @@ def abrir_gerador_codigo():
         codigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
         codigo_var.set(codigo)
 
-    def copiar_codigo():
-        janela.clipboard_clear()
-        janela.clipboard_append(codigo_var.get())
-
     janela = tk.Toplevel()
     janela.title("Gerar Código de 6 Dígitos")
     janela.geometry("350x200")
@@ -27,10 +23,10 @@ def abrir_gerador_codigo():
     btn_gerar = tk.Button(janela, text="Gerar Código", font=("Arial", 14), bg="#007ACC", fg="white",
                           command=gerar_codigo, width=15)
     btn_gerar.pack(pady=5)
+    
 
-    btn_copiar = tk.Button(janela, text="Copiar Código", font=("Arial", 14), bg="#0300A7", fg="white",
-                           command=copiar_codigo, width=15)
-    btn_copiar.pack(pady=5)
+
+
 
 
 # Exemplo simplificado de menu lateral com o botão adicionado
@@ -53,16 +49,13 @@ class SistemaPonto:
         )
         btn_gerar_codigo.pack(pady=10)
 
-        btn_status_dia = tk.Button(
-            self.menu_frame, text="📋 | Status do Dia", bg="#f0f0f0", width=15,
-            # comando da sua função para abrir status do dia
-            command=lambda: print("Abrir Status do Dia")
-        )
-        btn_status_dia.pack(pady=10)
-
-        # ... outros botões do menu aqui
+    abrir_gerador_codigo
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = SistemaPonto(root)
     root.mainloop()
+
+
+
+# limitador de tempo com 29 mimutos, e add um contador ao adm, e ao usuario.
