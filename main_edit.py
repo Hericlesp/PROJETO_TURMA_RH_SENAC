@@ -165,7 +165,7 @@ import gerar_codigo
 
 
 # 📂 Caminho para o banco de dados
-DB_DIR = r"C:\Users\998096\Documents\python\PROJETO_TURMA_RH_SENAC\DATA"
+DB_DIR = r"C:\Users\Justino\Documents\Hexa\git&github\PROJETO_TURMA_RH_SENAC\DATA"
 DB_PATH = os.path.join(DB_DIR, 'REGISTER_POINTS.db')
 
 
