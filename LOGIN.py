@@ -1,11 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import ttk
 import sqlite3
+import os
 import importlib
 
-#ARQUIVOS
+# 🔗 Caminho do banco
+DB_DIR = r"C:\Users\998096\Documents\python\PROJETO_TURMA_RH_SENAC\DATA"
+DB_PATH = os.path.join(DB_DIR, 'database.db')
 
+# 🧠 Seus módulos
 import main
 import USER_ponto_user_main
 
@@ -22,6 +25,7 @@ class LoginSistema:
         self.senha_var = tk.StringVar()
 
         self.criar_widgets()
+        
 
     def criar_widgets(self):
         self.top_frame = tk.Frame(self.root, bg="#F09001", height=80)
@@ -63,6 +67,7 @@ class LoginSistema:
             width=20, command=self.fazer_login
         )
         self.login_btn.grid(row=2, column=0, columnspan=2, pady=20)
+        
 
     def fazer_login(self):
         ra = self.usuario_var.get().strip()
@@ -72,31 +77,35 @@ class LoginSistema:
             messagebox.showwarning("Atenção", "Preencha todos os campos.")
             return
 
-        conn = sqlite3.connect('usuarios.db')
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT tipo FROM usuarios WHERE ra = ? AND senha = ?", (ra, senha))
+        cursor.execute(
+            "SELECT cargo FROM Usuarios WHERE RA = ? AND senha = ?",
+            (ra, senha)
+        )
         resultado = cursor.fetchone()
 
         conn.close()
 
+    
         if resultado:
-            tipo = resultado[0]
-            messagebox.showinfo("Login", f"Bem-vindo, {tipo.upper()}!")
+            cargo = resultado[0]
+            messagebox.showinfo("Login", f"Bem-vindo, {cargo.upper()}!")
 
             self.root.destroy()  # Fecha a janela de login
 
-            if tipo == "root":
-                modulo = importlib.import_module(main)
-                modulo.SistemaPonto()
+            # if cargo in ["root", "admin"]:
+            #     main.SistemaPonto()
+                
+            if cargo in ["root", "admin"]:
+                novo_root = tk.Tk()
+                main.SistemaPonto(novo_root).run()
 
-            elif tipo == "admin":
-                modulo = importlib.import_module(main)
-                modulo.SistemaPonto()
-
-            elif tipo == "usuario":
-                modulo = importlib.import_module(USER_ponto_user_main)
-                modulo.SistemaPonto()
+                
+            elif cargo == "usuario":
+                novo_root = tk.Tk()
+                USER_ponto_user_main.SistemaPonto(novo_root).run()
 
             else:
                 messagebox.showerror("Erro", "Permissão desconhecida!")
