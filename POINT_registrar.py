@@ -129,16 +129,13 @@
 #     app = Point(root)
 #     root.mainloop()
 
-
 import tkinter as tk
 import sqlite3
 import os
 from datetime import datetime
 
-
 DB_DIR = r"C:\Users\998096\Documents\python\PROJETO_TURMA_RH_SENAC\DATA"
-DB_PATH = os.path.join(DB_DIR, 'REGISTER_POINTS.db')
-
+DB_PATH = os.path.join(DB_DIR, 'database.db')  # banco correto
 
 class Point:
 
@@ -191,15 +188,18 @@ class Point:
         self.lista_pendentes = tk.Listbox(self.frame_right, width=40, height=20)
         self.lista_pendentes.pack(padx=10, pady=10, fill="both", expand=True)
 
-        # Atualiza os dados
+        # Atualiza os dados pela primeira vez
         self.carregar_dados()
+
+        # Agenda atualização periódica
+        self.atualizar_periodicamente()
 
     def carregar_dados(self):
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
-        # Buscar todos os colaboradores
-        cursor.execute("SELECT id, Nome, RA FROM Colaborador")
+        # Buscar todos os colaboradores no banco correto e com colunas corretas
+        cursor.execute("SELECT id, nome, matricula FROM cadastros WHERE ativo='Sim'")
         colaboradores = cursor.fetchall()
 
         total = len(colaboradores)
@@ -207,18 +207,18 @@ class Point:
         pendentes = []
 
         for colaborador in colaboradores:
-            colaborador_id, nome, ra = colaborador
+            colaborador_id, nome, matricula = colaborador
 
             cursor.execute('''
-                SELECT COUNT(*) FROM RegistroPonto
-                WHERE id_funcionario = ? AND data = ?
+                SELECT COUNT(*) FROM registro_ponto
+                WHERE colaborador_id = ? AND data = ?
             ''', (colaborador_id, self.data_hoje))
 
             resultado = cursor.fetchone()
-            if resultado[0] > 0:
-                registrados.append(f"{nome} | RA: {ra}")
+            if resultado and resultado[0] > 0:
+                registrados.append(f"{nome} | Matrícula: {matricula}")
             else:
-                pendentes.append(f"{nome} | RA: {ra}")
+                pendentes.append(f"{nome} | Matrícula: {matricula}")
 
         conn.close()
 
@@ -237,41 +237,16 @@ class Point:
         self.label_registrados.config(text=f"✅ Registraram: {len(registrados)}")
         self.label_pendentes.config(text=f"❌ Pendentes: {len(pendentes)}")
 
+    def atualizar_periodicamente(self):
+        self.data_hoje = datetime.now().strftime('%Y-%m-%d')  # Atualiza a data hoje (caso rode após meia-noite)
+        self.carregar_dados()
+        # Atualiza a cada 2 segundos (2000 milissegundos)
+        self.master.after(2000, self.atualizar_periodicamente)
+
 
 if __name__ == "__main__":
     if not os.path.exists(DB_DIR):
         os.makedirs(DB_DIR)
-
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    # Criar tabela de colaboradores
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Colaborador (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            RA INTEGER UNIQUE,
-            Nome TEXT NOT NULL,
-            Setor TEXT,
-            Email TEXT,
-            Celular TEXT,
-            Codigo TEXT NOT NULL
-        )
-    ''')
-
-    # Criar tabela de registro de ponto
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS RegistroPonto (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_funcionario INTEGER,
-            data TEXT,
-            hora TEXT,
-            tipo TEXT,
-            FOREIGN KEY (id_funcionario) REFERENCES Colaborador(id)
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
 
     root = tk.Tk()
     app = Point(root)
