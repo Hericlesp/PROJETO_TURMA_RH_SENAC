@@ -1,64 +1,9 @@
-# import sqlite3
-# import os
-
-# # Caminho do banco
-# DB_DIR = r"C:\Users\998096\Documents\python\PROJETO_TURMA_RH_SENAC\DATA"
-# DB_PATH = os.path.join(DB_DIR, 'REGISTER_POINTS.db')
-
-# # Criação da pasta, se não existir
-# if not os.path.exists(DB_DIR):
-#     os.makedirs(DB_DIR)
-
-
-# def criar_banco_e_tabelas():
-#     conn = sqlite3.connect(DB_PATH)
-#     cursor = conn.cursor()
-
-#     # 🏛️ Criação da tabela de colaboradores
-#     cursor.execute('''
-#         CREATE TABLE IF NOT EXISTS Colaborador (
-#             id INTEGER PRIMARY KEY AUTOINCREMENT,
-#             Nome TEXT NOT NULL,
-#             Codigo TEXT NOT NULL UNIQUE,
-#             Idade TEXT,
-#             DataNascimento TEXT,
-#             CPF TEXT,
-#             RG TEXT,
-#             Cargo TEXT,
-#             SalarioFixo TEXT,
-#             SalarioHora TEXT,
-#             DataAdmissao TEXT,
-#             DataDemissao TEXT
-#         )
-#     ''')
-
-#     # 🕒 Criação da tabela de registros de ponto
-#     cursor.execute('''
-#         CREATE TABLE IF NOT EXISTS RegistroPonto (
-#             id INTEGER PRIMARY KEY AUTOINCREMENT,
-#             ColaboradorID INTEGER,
-#             Data TEXT,
-#             Hora TEXT,
-#             Tipo TEXT,
-#             FOREIGN KEY (ColaboradorID) REFERENCES Colaborador(id)
-#         )
-#     ''')
-
-#     conn.commit()
-#     conn.close()
-#     print('Banco e tabelas verificados/criados com sucesso!')
-
-
-# # ⚙️ Executa sempre ao abrir o sistema
-# criar_banco_e_tabelas()
-
-
 import sqlite3
 import os
 
 # Caminho do banco
 DB_DIR = r"C:\Users\998096\Documents\python\PROJETO_TURMA_RH_SENAC\DATA"
-DB_PATH = os.path.join(DB_DIR, 'REGISTER_POINTS.db')
+DB_PATH = os.path.join(DB_DIR, 'database.db')
 
 # Criação da pasta, se não existir
 if not os.path.exists(DB_DIR):
@@ -69,54 +14,73 @@ def criar_banco_e_tabelas():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # 🏛️ Tabela de colaboradores
+    # 🏛️ Tabela de cadastro dos funcionários
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Colaborador (
+        CREATE TABLE IF NOT EXISTS cadastros (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            Nome TEXT NOT NULL,
-            RA INTEGER UNIQUE NOT NULL,
-            Codigo TEXT
+            nome TEXT NOT NULL,
+            matricula INTEGER UNIQUE NOT NULL,
+            contato INTEGER,
+            idade INTEGER,
+            data_nascimento TEXT,
+            cpf INTEGER,
+            rg INTEGER,
+            tipo_contratacao TEXT CHECK (tipo_contratacao IN ('Fixa', 'Horista')),
+            cargo TEXT,
+            salario REAL,
+            data_admissao TEXT,
+            ativo TEXT CHECK (ativo IN ('Sim', 'Não')) DEFAULT 'Sim'
         )
     ''')
 
     # 🕒 Tabela de registro de ponto
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS RegistroPonto (
+        CREATE TABLE IF NOT EXISTS registro_ponto (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ColaboradorID INTEGER,
-            Data TEXT,
-            Hora TEXT,
-            Tipo TEXT,
-            FOREIGN KEY (ColaboradorID) REFERENCES Colaborador(id)
+            colaborador_id INTEGER,
+            data TEXT,
+            hora TEXT,
+            tipo TEXT CHECK (tipo IN ('Entrada', 'Saída')),
+            FOREIGN KEY (colaborador_id) REFERENCES cadastros(id)
         )
     ''')
 
-    # 🗂️ Tabela de registro dos códigos gerados
+    # 🗂️ Tabela de códigos gerados (HISTÓRICO COMPLETO DOS CÓDIGOS)
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Registros_Codigos (
+        CREATE TABLE IF NOT EXISTS registros_codigos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             colaborador_id INTEGER,
             data TEXT,
             hora TEXT,
             codigo TEXT,
-            tipo TEXT,
-            FOREIGN KEY (colaborador_id) REFERENCES Colaborador(id)
+            tipo TEXT CHECK (tipo IN ('Entrada', 'Almoço', 'Retorno', 'Saída')),
+            status TEXT CHECK (status IN ('Ativo', 'Expirado')) DEFAULT 'Ativo',
+            FOREIGN KEY (colaborador_id) REFERENCES cadastros(id)
         )
     ''')
 
-    # 🔧 Cadastra o administrador, se não existir
-    cursor.execute('SELECT * FROM Colaborador WHERE RA = ?', (998096,))
+    # 👤 Tabela de usuários (login de acesso ao sistema)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            matricula INTEGER UNIQUE NOT NULL,
+            senha TEXT NOT NULL,
+            cargo TEXT CHECK (cargo IN ('ADM', 'USER', 'ROOT')) NOT NULL
+        )
+    ''')
+
+    # 🔧 Inserir usuário administrador padrão, se não existir
+    cursor.execute('SELECT * FROM usuarios WHERE matricula = ?', (998096,))
     if not cursor.fetchone():
         cursor.execute('''
-            INSERT INTO Colaborador (Nome, RA, Codigo)
+            INSERT INTO usuarios (matricula, senha, cargo)
             VALUES (?, ?, ?)
-        ''', ('Administrador', 998096, ''))
-        conn.commit()
+        ''', (998096, '998096', 'ROOT'))
 
     conn.commit()
     conn.close()
-    print('Banco e tabelas verificados/criados com sucesso!')
+    print('Banco de dados e tabelas criadas/verificadas com sucesso!')
 
 
-# ⚙️ Executa sempre ao abrir o sistema
+# Executa a criação do banco sempre que roda
 criar_banco_e_tabelas()
