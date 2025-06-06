@@ -70,22 +70,28 @@ class LoginSistema:
         
 
     def fazer_login(self):
-        ra = self.usuario_var.get().strip()
+        matricula = self.usuario_var.get().strip()
         senha = self.senha_var.get().strip()
 
-        if not ra or not senha:
+        if not matricula or not senha:
             messagebox.showwarning("Atenção", "Preencha todos os campos.")
+            return
+        
+        try:
+            matricula_int = int(matricula)  # Convertendo para inteiro
+            
+        except ValueError:
+            messagebox.showerror("Erro", "Matrícula deve ser numérica.")
             return
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
         cursor.execute(
-            "SELECT cargo FROM Usuarios WHERE RA = ? AND senha = ?",
-            (ra, senha)
+            "SELECT cargo FROM Usuarios WHERE matricula = ? AND senha = ?",
+            (matricula_int, senha)
         )
         resultado = cursor.fetchone()
-
         conn.close()
 
     
@@ -95,23 +101,21 @@ class LoginSistema:
 
             self.root.destroy()  # Fecha a janela de login
 
-            # if cargo in ["root", "admin"]:
-            #     main.SistemaPonto()
-                
-            if cargo in ["root", "admin"]:
+               
+            if cargo in ["ROOT", "ADM"]:
                 novo_root = tk.Tk()
                 main.SistemaPonto(novo_root).run()
 
                 
-            elif cargo == "usuario":
+            elif cargo == "USER":
                 novo_root = tk.Tk()
-                USER_ponto_user_main.SistemaPonto(novo_root).run()
+                USER_ponto_user_main.SistemaPonto(novo_root, matricula_int).run()
 
             else:
                 messagebox.showerror("Erro", "Permissão desconhecida!")
 
         else:
-            messagebox.showerror("Erro", "RA ou senha incorretos.")
+            messagebox.showerror("Erro", "Matrícula ou senha incorretos.")
 
 
 if __name__ == "__main__":
